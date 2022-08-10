@@ -45,6 +45,7 @@ public class PortfolioManagerApplication {
   //  1. There can be few unused imports, you will need to fix them to make the build pass.
   //  2. You can use "./gradlew build" to check if your code builds successfully.
 
+
   public static List<String> mainReadFile(String[] args) throws IOException, URISyntaxException {
 
     File inputFile = resolveFileFromResources(args[0]);
@@ -52,7 +53,7 @@ public class PortfolioManagerApplication {
     List <String> symbolList = new ArrayList<>();
     for (PortfolioTrade pt : portfolioTrade){
       symbolList.add(pt.getSymbol());
-    }git
+    }
      return symbolList;
   }
 
