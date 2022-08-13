@@ -165,25 +165,10 @@ public class PortfolioManagerApplication {
 
     String token = "4170cea0d1c7f54ba505cc34b8aec02e24536c90";//hardik05 "f4fb86085f26a9ce03740f043d2cc51a2c380304";
     List<PortfolioTrade> portfolioTrades = readTradesFromJson(args[0]); 
-    List<TotalReturnsDto> totalReturnsDtos = new ArrayList<>();
     List<String> quotesList = new ArrayList<>();
     LocalDate endDate = LocalDate.parse(args[1]);
-
-    for (PortfolioTrade trade : portfolioTrades){
-      String url = prepareUrl(trade, endDate, token);
-      if(trade.getPurchaseDate().isAfter(endDate)){
-        throw new RuntimeException();
-      }      
-      TiingoCandle[] candles = new RestTemplate().getForObject(url,TiingoCandle[].class);    
-
-      for(TiingoCandle candle : candles){       
-        if(candle.getDate().toString().equals(endDate.toString())){
-          totalReturnsDtos.add(new TotalReturnsDto(trade.getSymbol(), candle.getClose()));
-        } 
-      }    
-    }
     
-  
+    List<TotalReturnsDto> totalReturnsDtos = getTotalReturnForEndDate(portfolioTrades,endDate,token);
     Collections.sort(totalReturnsDtos,new SortClosingDates());
 
     for(TotalReturnsDto tdo : totalReturnsDtos){
@@ -213,6 +198,24 @@ public class PortfolioManagerApplication {
      String url = tiingoEndpoint+ticker+"/prices?startDate="+startDate+"&endDate="+endDate+"&token="+token;
      return url;
   }
+
+  public static List<TotalReturnsDto> getTotalReturnForEndDate(List<PortfolioTrade> portfolioTrades ,LocalDate endDate,String token) {
+
+    List<TotalReturnsDto> totalReturnsDtos = new ArrayList<>();
+    for (PortfolioTrade trade : portfolioTrades){
+      String url = prepareUrl(trade, endDate, token);
+      if(trade.getPurchaseDate().isAfter(endDate)){
+        throw new RuntimeException();
+      }      
+      TiingoCandle[] candles = new RestTemplate().getForObject(url,TiingoCandle[].class);    
+      for(TiingoCandle candle : candles){       
+        if(candle.getDate().toString().equals(endDate.toString())){
+          totalReturnsDtos.add(new TotalReturnsDto(trade.getSymbol(), candle.getClose()));
+        } 
+      }    
+    }
+    return totalReturnsDtos;
+ }
 
 
 
