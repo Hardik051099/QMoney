@@ -250,7 +250,7 @@ public class PortfolioManagerApplication {
           .collect(Collectors.toList());         
             return calculateAnnualizedReturns(endDate, trade, getOpeningPriceOnStartDate(candlesList), getClosingPriceOnEndDate(candlesList));
         })
-        .sorted(Comparator.comparingDouble(AnnualizedReturn::getAnnualizedReturn))
+        .sorted(Comparator.comparingDouble(AnnualizedReturn::getAnnualizedReturn).reversed())
         .collect(Collectors.toList());
       
   }
