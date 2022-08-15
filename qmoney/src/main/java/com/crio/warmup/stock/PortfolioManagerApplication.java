@@ -167,8 +167,8 @@ public class PortfolioManagerApplication {
     List<PortfolioTrade> portfolioTrades = readTradesFromJson(args[0]); 
     List<String> quotesList = new ArrayList<>();
     LocalDate endDate = LocalDate.parse(args[1]);
-    
-    List<TotalReturnsDto> totalReturnsDtos = getTotalReturnForEndDate(portfolioTrades,endDate,token);
+
+    List<TotalReturnsDto> totalReturnsDtos = getTotalReturnsForEndDate(portfolioTrades,endDate,token);
     Collections.sort(totalReturnsDtos,new SortClosingDates());
 
     for(TotalReturnsDto tdo : totalReturnsDtos){
@@ -199,7 +199,7 @@ public class PortfolioManagerApplication {
      return url;
   }
 
-  public static List<TotalReturnsDto> getTotalReturnForEndDate(List<PortfolioTrade> portfolioTrades ,LocalDate endDate,String token) {
+  public static List<TotalReturnsDto> getTotalReturnsForEndDate(List<PortfolioTrade> portfolioTrades ,LocalDate endDate,String token) {
 
     List<TotalReturnsDto> totalReturnsDtos = new ArrayList<>();
     for (PortfolioTrade trade : portfolioTrades){
