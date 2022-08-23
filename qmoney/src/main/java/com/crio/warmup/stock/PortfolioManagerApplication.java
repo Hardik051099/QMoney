@@ -4,6 +4,8 @@ package com.crio.warmup.stock;
 
 import com.crio.warmup.stock.dto.*;
 import com.crio.warmup.stock.log.UncaughtExceptionHandler;
+import com.crio.warmup.stock.portfolio.PortfolioManager;
+import com.crio.warmup.stock.portfolio.PortfolioManagerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.io.File;
@@ -15,12 +17,21 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
+import java.net.URL;
 import java.util.logging.Logger;
 import org.apache.logging.log4j.ThreadContext;
 import java.util.stream.Collectors;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import org.apache.logging.log4j.ThreadContext;
 import org.springframework.web.client.RestTemplate;
 
 
@@ -207,6 +218,17 @@ public class PortfolioManagerApplication {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
     // TODO: CRIO_TASK_MODULE_CALCULATIONS
   //  Now that you have the list of PortfolioTrade and their data, calculate annualized returns
   //  for the stocks provided in the Json.
@@ -278,6 +300,35 @@ public class PortfolioManagerApplication {
 
       return new AnnualizedReturn(trade.getSymbol(), annualizedReturns, totalReturns);
   }
+  // TODO: CRIO_TASK_MODULE_REFACTOR
+  //  Once you are done with the implementation inside PortfolioManagerImpl and
+  //  PortfolioManagerFactory, create PortfolioManager using PortfolioManagerFactory.
+  //  Refer to the code from previous modules to get the List<PortfolioTrades> and endDate, and
+  //  call the newly implemented method in PortfolioManager to calculate the annualized returns.
+
+  // Note:
+  // Remember to confirm that you are getting same results for annualized returns as in Module 3.
+
+
+  //Sample Code
+  public static List<AnnualizedReturn> mainCalculateReturnsAfterRefactor(String[] args)
+      throws Exception {      
+       PortfolioManager portfolioManager = PortfolioManagerFactory.getPortfolioManager(new RestTemplate());
+       String file = args[0];
+       LocalDate endDate = LocalDate.parse(args[1]);
+       String contents = readFileAsString(file);
+       ObjectMapper objectMapper = getObjectMapper();
+       PortfolioTrade[] portfolioTrades = objectMapper.readValue(contents, PortfolioTrade[].class);
+       return portfolioManager.calculateAnnualizedReturn(Arrays.asList(portfolioTrades), endDate);
+  }
+
+
+  private static String readFileAsString(String file) throws IOException, URISyntaxException {
+    String response = new String(Files.readAllBytes(Paths.get(
+      Thread.currentThread().getContextClassLoader().getResource(file).toURI())));
+    return response;
+  }
+
 
 
   public static void main(String[] args) throws Exception {
@@ -287,13 +338,16 @@ public class PortfolioManagerApplication {
 
     //printJsonObject(mainReadFile(args));
     //printJsonObject(mainReadQuotes(args));
-    printJsonObject(mainCalculateSingleReturn(args));
-
+    //printJsonObject(mainCalculateSingleReturn(args));
+    printJsonObject(mainCalculateReturnsAfterRefactor(args));
 
   }
-public static String getToken() {
-  String token = "f4fb86085f26a9ce03740f043d2cc51a2c380304";//hardik10 "4170cea0d1c7f54ba505cc34b8aec02e24536c90";//hardik05 "f4fb86085f26a9ce03740f043d2cc51a2c380304";
-  return token;
+  
+  public static String getToken() {
+    String token = "f4fb86085f26a9ce03740f043d2cc51a2c380304";//hardik10 "4170cea0d1c7f54ba505cc34b8aec02e24536c90";//hardik05 "f4fb86085f26a9ce03740f043d2cc51a2c380304";
+    return token;
 }
+
 }
+
 
