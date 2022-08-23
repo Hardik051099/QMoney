@@ -116,6 +116,8 @@ public static Double getClosingPriceOnEndDate(List<Candle> candles) {
   @Override
   public List<AnnualizedReturn> calculateAnnualizedReturn(List<PortfolioTrade> portfolioTrades,
       LocalDate endDate) {
+
+        System.out.println("HAHAHAHHAHA "+endDate.toString());
         return portfolioTrades.stream()
             .map(trade -> {
               if(trade.getPurchaseDate().isAfter(endDate)){
