@@ -112,6 +112,10 @@ public static Double getClosingPriceOnEndDate(List<Candle> candles) {
   return candles.get(candles.size()-1).getClose();
 }
 
+public static LocalDate getLastWorkingDate (LocalDate date){
+  return (date.getDayOfWeek().toString()=="SATURDAY")?date.minus(1, ChronoUnit.DAYS):(date.getDayOfWeek().toString()=="SUNDAY")?date.minus(2, ChronoUnit.DAYS):date;
+}
+
   //Calculate annulized method
   @Override
   public List<AnnualizedReturn> calculateAnnualizedReturn(List<PortfolioTrade> portfolioTrades,
@@ -121,10 +125,8 @@ public static Double getClosingPriceOnEndDate(List<Candle> candles) {
             .map(trade -> {
               List<Candle> candlesList = getStockQuote(trade.getSymbol(), trade.getPurchaseDate(), endDate)
               .stream()
-              .filter(candle -> candle.getDate().equals(trade.getPurchaseDate()) || candle.getDate().equals(endDate))
+              .filter(candle -> candle.getDate().equals(trade.getPurchaseDate()) || candle.getDate().equals(getLastWorkingDate(endDate)))
               .collect(Collectors.toList());
-
-              System.out.println("HAHAHAHHAHA "+candlesList.size()+" "+candlesList.get(0).getDate().toString());        
                 return mainCalculation(endDate, trade, getOpeningPriceOnStartDate(candlesList), getClosingPriceOnEndDate(candlesList));
             })
             .sorted(Comparator.comparingDouble(AnnualizedReturn::getAnnualizedReturn).reversed())
