@@ -344,7 +344,7 @@ public class PortfolioManagerApplication {
   }
   
   public static String getToken() {
-    String token = "f4fb86085f26a9ce03740f043d2cc51a2c380304";//hardik10 "4170cea0d1c7f54ba505cc34b8aec02e24536c90";//hardik05 "f4fb86085f26a9ce03740f043d2cc51a2c380304";
+    String token = "4170cea0d1c7f54ba505cc34b8aec02e24536c90";//hardik10 "4170cea0d1c7f54ba505cc34b8aec02e24536c90";//hardik05 "f4fb86085f26a9ce03740f043d2cc51a2c380304";
     return token;
 }
 
