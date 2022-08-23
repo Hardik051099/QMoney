@@ -91,7 +91,7 @@ private RestTemplate restTemplate;
 //Calculation part for annualized return
 public static AnnualizedReturn mainCalculation(LocalDate endDate,
 PortfolioTrade trade, Double buyPrice, Double sellPrice) {
-  
+
   LocalDate purchaseDate = trade.getPurchaseDate();
   double years = purchaseDate.until(endDate, ChronoUnit.DAYS)/365.24;
   double totalReturns = (sellPrice - buyPrice) / buyPrice;
@@ -128,7 +128,7 @@ public static LocalDate getLastWorkingDate (LocalDate date){
               .filter(candle -> candle.getDate().equals(trade.getPurchaseDate()) || candle.getDate().equals(endDate))
               .collect(Collectors.toList());
                 
-                return mainCalculation(endDate, trade, getOpeningPriceOnStartDate(candlesList), (candlesList.size()<2)?0.0:getClosingPriceOnEndDate(candlesList));
+                return mainCalculation(endDate, trade, getOpeningPriceOnStartDate(candlesList),0.0 ); //(candlesList.size()<2)?0.0:getClosingPriceOnEndDate(candlesList)
             })
             .sorted(Comparator.comparingDouble(AnnualizedReturn::getAnnualizedReturn).reversed())
             .collect(Collectors.toList());
