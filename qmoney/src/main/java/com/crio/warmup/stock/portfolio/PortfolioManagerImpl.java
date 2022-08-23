@@ -89,7 +89,7 @@ private RestTemplate restTemplate;
   }
 
 //Calculation part for annualized return
-public static AnnualizedReturn calculateAnnualizedReturns(LocalDate endDate,
+public static AnnualizedReturn mainCalculation(LocalDate endDate,
 PortfolioTrade trade, Double buyPrice, Double sellPrice) {
   
   LocalDate purchaseDate = trade.getPurchaseDate();
@@ -116,14 +116,16 @@ public static Double getClosingPriceOnEndDate(List<Candle> candles) {
   @Override
   public List<AnnualizedReturn> calculateAnnualizedReturn(List<PortfolioTrade> portfolioTrades,
       LocalDate endDate) {
-
         return portfolioTrades.stream()
             .map(trade -> {
+              if(trade.getPurchaseDate().isAfter(endDate)){
+                throw new RuntimeException();
+              } 
               List<Candle> candlesList = getStockQuote(trade.getSymbol(), trade.getPurchaseDate(), endDate)
               .stream()
               .filter(candle -> candle.getDate().equals(trade.getPurchaseDate()) || candle.getDate().equals(endDate))
               .collect(Collectors.toList());         
-                return calculateAnnualizedReturns(endDate, trade, getOpeningPriceOnStartDate(candlesList), getClosingPriceOnEndDate(candlesList));
+                return mainCalculation(endDate, trade, getOpeningPriceOnStartDate(candlesList), getClosingPriceOnEndDate(candlesList));
             })
             .sorted(Comparator.comparingDouble(AnnualizedReturn::getAnnualizedReturn).reversed())
             .collect(Collectors.toList());
