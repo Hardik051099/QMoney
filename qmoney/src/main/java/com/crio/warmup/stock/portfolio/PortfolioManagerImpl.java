@@ -124,7 +124,7 @@ public static Double getClosingPriceOnEndDate(List<Candle> candles) {
               .filter(candle -> candle.getDate().equals(trade.getPurchaseDate()) || candle.getDate().equals(endDate))
               .collect(Collectors.toList());
 
-              System.out.println("HAHAHAHHAHA "+candleList.size()+" "+candlesList.get(0).getDate().toString());        
+              System.out.println("HAHAHAHHAHA "+candlesList.size()+" "+candlesList.get(0).getDate().toString());        
                 return mainCalculation(endDate, trade, getOpeningPriceOnStartDate(candlesList), getClosingPriceOnEndDate(candlesList));
             })
             .sorted(Comparator.comparingDouble(AnnualizedReturn::getAnnualizedReturn).reversed())
