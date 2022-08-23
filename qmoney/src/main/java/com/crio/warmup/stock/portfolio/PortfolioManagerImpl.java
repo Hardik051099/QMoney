@@ -117,7 +117,6 @@ public static Double getClosingPriceOnEndDate(List<Candle> candles) {
   public List<AnnualizedReturn> calculateAnnualizedReturn(List<PortfolioTrade> portfolioTrades,
       LocalDate endDate) {
 
-        System.out.println("HAHAHAHHAHA "+endDate.toString());
         return portfolioTrades.stream()
             .map(trade -> {
               if(trade.getPurchaseDate().isAfter(endDate)){
@@ -126,7 +125,8 @@ public static Double getClosingPriceOnEndDate(List<Candle> candles) {
               List<Candle> candlesList = getStockQuote(trade.getSymbol(), trade.getPurchaseDate(), endDate)
               .stream()
               .filter(candle -> candle.getDate().equals(trade.getPurchaseDate()) || candle.getDate().equals(endDate))
-              .collect(Collectors.toList());         
+              .collect(Collectors.toList());
+              System.out.println("HAHAHAHHAHA "+getOpeningPriceOnStartDate(candlesList)+"  "+getClosingPriceOnEndDate(candlesList));        
                 return mainCalculation(endDate, trade, getOpeningPriceOnStartDate(candlesList), getClosingPriceOnEndDate(candlesList));
             })
             .sorted(Comparator.comparingDouble(AnnualizedReturn::getAnnualizedReturn).reversed())
