@@ -172,7 +172,7 @@ public class PortfolioManagerApplication {
 
   // TODO:
   //  Build the Url using given parameters and use this function in your code to cann the API.
-  // https://api.tiingo.com/tiingo/daily/<ticker>/prices?startDate=2012-1-1&endDate=2016-1-1
+  // https://api.tiingo.com/tiingo/daily/googl/prices?startDate=2019-1-1&endDate=2019-12-20
   public static String prepareUrl(PortfolioTrade trade, LocalDate endDate, String token) {
      String tiingoEndpoint = "https://api.tiingo.com/tiingo/daily/";
      String ticker = trade.getSymbol();
@@ -239,6 +239,7 @@ public class PortfolioManagerApplication {
 
   public static List<AnnualizedReturn> mainCalculateSingleReturn(String[] args)
       throws IOException, URISyntaxException {
+        
         List<PortfolioTrade> portfolioTrades = readTradesFromJson(args[0]); 
         LocalDate endDate = LocalDate.parse(args[1]);
 
@@ -291,7 +292,7 @@ public class PortfolioManagerApplication {
 
   }
 public static String getToken() {
-  String token = "4170cea0d1c7f54ba505cc34b8aec02e24536c90";//hardik05 "f4fb86085f26a9ce03740f043d2cc51a2c380304";
+  String token = "f4fb86085f26a9ce03740f043d2cc51a2c380304";//hardik10 "4170cea0d1c7f54ba505cc34b8aec02e24536c90";//hardik05 "f4fb86085f26a9ce03740f043d2cc51a2c380304";
   return token;
 }
 }
