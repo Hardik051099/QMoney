@@ -125,9 +125,10 @@ public static LocalDate getLastWorkingDate (LocalDate date){
             .map(trade -> {
               List<Candle> candlesList = getStockQuote(trade.getSymbol(), trade.getPurchaseDate(), endDate)
               .stream()
-              .filter(candle -> candle.getDate().equals(trade.getPurchaseDate()) || candle.getDate().equals(getLastWorkingDate(endDate)))
+              .filter(candle -> candle.getDate().equals(trade.getPurchaseDate()) || candle.getDate().equals(endDate))
               .collect(Collectors.toList());
-                return mainCalculation(endDate, trade, getOpeningPriceOnStartDate(candlesList), getClosingPriceOnEndDate(candlesList));
+                
+                return mainCalculation(endDate, trade, getOpeningPriceOnStartDate(candlesList), (candlesList.size()<2)?0.0:getClosingPriceOnEndDate(candlesList));
             })
             .sorted(Comparator.comparingDouble(AnnualizedReturn::getAnnualizedReturn).reversed())
             .collect(Collectors.toList());
