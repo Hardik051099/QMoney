@@ -84,7 +84,7 @@ private RestTemplate restTemplate;
 
   //returns tiingo token
   public static String getToken() {
-    String token = "f4fb86085f26a9ce03740f043d2cc51a2c380304";//hardik10 "4170cea0d1c7f54ba505cc34b8aec02e24536c90";//hardik05 "f4fb86085f26a9ce03740f043d2cc51a2c380304";
+    String token = "4170cea0d1c7f54ba505cc34b8aec02e24536c90";//hardik10 "4170cea0d1c7f54ba505cc34b8aec02e24536c90";//hardik05 "f4fb86085f26a9ce03740f043d2cc51a2c380304";
     return token;
   }
 
@@ -113,7 +113,7 @@ public static Double getClosingPriceOnEndDate(List<Candle> candles) {
 }
 
 public static LocalDate getLastWorkingDate (LocalDate date){
-  return (date.getDayOfWeek().toString()=="SATURDAY")?date.minus(1, ChronoUnit.DAYS):(date.getDayOfWeek().toString()=="SUNDAY")?date.minus(2, ChronoUnit.DAYS):date;
+  return (date.getDayOfWeek().toString()=="SATURDAY")?date.minus(2, ChronoUnit.DAYS):(date.getDayOfWeek().toString()=="SUNDAY")?date.minus(2, ChronoUnit.DAYS):date;
 }
 
   //Calculate annulized method
@@ -125,10 +125,9 @@ public static LocalDate getLastWorkingDate (LocalDate date){
             .map(trade -> {
               List<Candle> candlesList = getStockQuote(trade.getSymbol(), trade.getPurchaseDate(), endDate)
               .stream()
-              .filter(candle -> candle.getDate().equals(trade.getPurchaseDate()) || candle.getDate().equals(endDate))
+              .filter(candle -> candle.getDate().equals(trade.getPurchaseDate()) || candle.getDate().equals(getLastWorkingDate(endDate)))
               .collect(Collectors.toList());
-                
-                return mainCalculation(endDate, trade, getOpeningPriceOnStartDate(candlesList),0.0 ); //(candlesList.size()<2)?0.0:getClosingPriceOnEndDate(candlesList)
+                return mainCalculation(endDate, trade, getOpeningPriceOnStartDate(candlesList),getClosingPriceOnEndDate(candlesList)); //(candlesList.size()<2)?0.0:getClosingPriceOnEndDate(candlesList)
             })
             .sorted(Comparator.comparingDouble(AnnualizedReturn::getAnnualizedReturn).reversed())
             .collect(Collectors.toList());

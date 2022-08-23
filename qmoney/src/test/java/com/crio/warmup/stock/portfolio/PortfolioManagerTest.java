@@ -117,8 +117,9 @@ class PortfolioManagerTest {
   public void calculateAnnualizedReturnNoDataOnEndDate()
       throws Exception {
     //given
-    String moduleToRun = null;
+    String moduleToRun = "REFACTOR";
     moduleToRun = "REFACTOR";
+
 
     if (moduleToRun.equals("REFACTOR")) {
       Mockito.doReturn(getCandles(aaplQuotes))
@@ -137,7 +138,7 @@ class PortfolioManagerTest {
 
     //when
     List<AnnualizedReturn> annualizedReturns = portfolioManager
-        .calculateAnnualizedReturn(portfolioTrades, LocalDate.parse("2019-12-12"));
+        .calculateAnnualizedReturn(portfolioTrades, LocalDate.parse("2019-12-14"));
 
     //then
     List<String> symbols = annualizedReturns.stream().map(AnnualizedReturn::getSymbol)
