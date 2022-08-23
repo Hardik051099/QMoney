@@ -84,7 +84,7 @@ private RestTemplate restTemplate;
 
   //returns tiingo token
   public static String getToken() {
-    String token = "f4fb86085f26a9ce03740f043d2cc51a2c380304";//hardik10 "4170cea0d1c7f54ba505cc34b8aec02e24536c90";//hardik05 "f4fb86085f26a9ce03740f043d2cc51a2c380304";
+    String token = "0e13a0db0ed1675aada089c4dd39990e527e5ec6";//hardik10 "4170cea0d1c7f54ba505cc34b8aec02e24536c90";//hardik05 "f4fb86085f26a9ce03740f043d2cc51a2c380304";
     return token;
   }
 
