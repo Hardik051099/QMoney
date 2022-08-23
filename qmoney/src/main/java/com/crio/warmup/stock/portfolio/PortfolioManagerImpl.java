@@ -119,14 +119,12 @@ public static Double getClosingPriceOnEndDate(List<Candle> candles) {
 
         return portfolioTrades.stream()
             .map(trade -> {
-              if(trade.getPurchaseDate().isAfter(endDate)){
-                throw new RuntimeException();
-              } 
               List<Candle> candlesList = getStockQuote(trade.getSymbol(), trade.getPurchaseDate(), endDate)
               .stream()
               .filter(candle -> candle.getDate().equals(trade.getPurchaseDate()) || candle.getDate().equals(endDate))
               .collect(Collectors.toList());
-              System.out.println("HAHAHAHHAHA "+getOpeningPriceOnStartDate(candlesList)+"  "+getClosingPriceOnEndDate(candlesList));        
+
+              System.out.println("HAHAHAHHAHA "+candleList.size()+" "+candlesList.get(0).getDate().toString());        
                 return mainCalculation(endDate, trade, getOpeningPriceOnStartDate(candlesList), getClosingPriceOnEndDate(candlesList));
             })
             .sorted(Comparator.comparingDouble(AnnualizedReturn::getAnnualizedReturn).reversed())
