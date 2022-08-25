@@ -1,29 +1,16 @@
 
 package com.crio.warmup.stock.portfolio;
 
-import static java.time.temporal.ChronoUnit.DAYS;
-import static java.time.temporal.ChronoUnit.SECONDS;
-import java.io.IOException;
-import java.net.URISyntaxException;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 import com.crio.warmup.stock.dto.AnnualizedReturn;
 import com.crio.warmup.stock.dto.Candle;
 import com.crio.warmup.stock.dto.PortfolioTrade;
 import com.crio.warmup.stock.dto.TiingoCandle;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 import org.springframework.web.client.RestTemplate;
 
 public class PortfolioManagerImpl implements PortfolioManager {
@@ -55,6 +42,7 @@ private RestTemplate restTemplate;
 
   //For sorting AnnualizedReturns in descending order
   private Comparator<AnnualizedReturn> getComparator() {
+    //Comparator.comparingDouble(AnnualizedReturn::getAnnualizedReturn).reversed()
     return Comparator.comparing(AnnualizedReturn::getAnnualizedReturn).reversed();
   }
 
@@ -74,7 +62,7 @@ private RestTemplate restTemplate;
   }
   //builds url from params
   protected String buildUri(String symbol, LocalDate startDate, LocalDate endDate) {
-       String uriTemplate = "https:api.tiingo.com/tiingo/daily/$SYMBOL/prices?"
+       String uriTemplate = "https://api.tiingo.com/tiingo/daily/$SYMBOL/prices?"
             + "startDate=$STARTDATE&endDate=$ENDDATE&token=$APIKEY";
             
       return uriTemplate.replace("$APIKEY", getToken())
@@ -129,7 +117,7 @@ public static LocalDate getLastWorkingDate (LocalDate date){
               .collect(Collectors.toList());
                 return mainCalculation(endDate, trade, getOpeningPriceOnStartDate(candlesList),getClosingPriceOnEndDate(candlesList)); //(candlesList.size()<2)?0.0:getClosingPriceOnEndDate(candlesList)
             })
-            .sorted(Comparator.comparingDouble(AnnualizedReturn::getAnnualizedReturn).reversed())
+            .sorted(getComparator())
             .collect(Collectors.toList());
   }
 
