@@ -3,6 +3,7 @@ package com.crio.warmup.stock.portfolio;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -11,17 +12,22 @@ import com.crio.warmup.stock.dto.AnnualizedReturn;
 import com.crio.warmup.stock.dto.Candle;
 import com.crio.warmup.stock.dto.PortfolioTrade;
 import com.crio.warmup.stock.dto.TiingoCandle;
+import com.crio.warmup.stock.quotes.StockQuotesService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.web.client.RestTemplate;
 
 public class PortfolioManagerImpl implements PortfolioManager {
 
 
 private RestTemplate restTemplate;
-
+private StockQuotesService stockQuotesService;
   // Caution: Do not delete or modify the constructor, or else your build will break!
   // This is absolutely necessary for backward compatibility
   protected PortfolioManagerImpl(RestTemplate restTemplate) {
     this.restTemplate = restTemplate;
+  }
+  protected PortfolioManagerImpl(StockQuotesService stockQuotesService) {
+    this.stockQuotesService = stockQuotesService;
   }
 
 
@@ -111,10 +117,15 @@ public static LocalDate getLastWorkingDate (LocalDate date){
 
         return portfolioTrades.stream()
             .map(trade -> {
-              List<Candle> candlesList = getStockQuote(trade.getSymbol(), trade.getPurchaseDate(), endDate)
-              .stream()
-              .filter(candle -> candle.getDate().equals(trade.getPurchaseDate()) || candle.getDate().equals(getLastWorkingDate(endDate)))
-              .collect(Collectors.toList());
+              List<Candle> candlesList = new ArrayList<>();
+              try {
+                candlesList = stockQuotesService.getStockQuote(trade.getSymbol(), trade.getPurchaseDate(), endDate)
+                .stream()
+                .filter(candle -> candle.getDate().equals(trade.getPurchaseDate()) || candle.getDate()  .equals(getLastWorkingDate(endDate)))
+                .collect(Collectors.toList());
+              } catch (JsonProcessingException e) {
+                e.printStackTrace();
+              }
                 return mainCalculation(endDate, trade, getOpeningPriceOnStartDate(candlesList),getClosingPriceOnEndDate(candlesList)); //(candlesList.size()<2)?0.0:getClosingPriceOnEndDate(candlesList)
             })
             .sorted(getComparator())

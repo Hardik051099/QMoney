@@ -306,16 +306,16 @@ public class PortfolioManagerApplication {
 
 
   //Sample Code
-  public static List<AnnualizedReturn> mainCalculateReturnsAfterRefactor(String[] args)
-      throws Exception {      
-       PortfolioManager portfolioManager = PortfolioManagerFactory.getPortfolioManager(new RestTemplate());
-       String file = args[0];
-       LocalDate endDate = LocalDate.parse(args[1]);
-       String contents = readFileAsString(file);
-       ObjectMapper objectMapper = getObjectMapper();
-       PortfolioTrade[] portfolioTrades = objectMapper.readValue(contents, PortfolioTrade[].class);
-       return portfolioManager.calculateAnnualizedReturn(Arrays.asList(portfolioTrades), endDate);
-  }
+  // public static List<AnnualizedReturn> mainCalculateReturnsAfterRefactor(String[] args)
+  //     throws Exception {      
+  //      PortfolioManager portfolioManager = PortfolioManagerFactory.getPortfolioManager(new RestTemplate());
+  //      String file = args[0];
+  //      LocalDate endDate = LocalDate.parse(args[1]);
+  //      String contents = readFileAsString(file);
+  //      ObjectMapper objectMapper = getObjectMapper();
+  //      PortfolioTrade[] portfolioTrades = objectMapper.readValue(contents, PortfolioTrade[].class);
+  //      return portfolioManager.calculateAnnualizedReturn(Arrays.asList(portfolioTrades), endDate);
+  // }
 
 
   private static String readFileAsString(String file) throws IOException, URISyntaxException {
@@ -334,14 +334,14 @@ public class PortfolioManagerApplication {
     //printJsonObject(mainReadFile(args));
     //printJsonObject(mainReadQuotes(args));
     //printJsonObject(mainCalculateSingleReturn(args));
-    printJsonObject(mainCalculateReturnsAfterRefactor(args));
+    //printJsonObject(mainCalculateReturnsAfterRefactor(args));
 
   }
   
   public static String getToken() {
-    String token = "4170cea0d1c7f54ba505cc34b8aec02e24536c90";//hardik10 "4170cea0d1c7f54ba505cc34b8aec02e24536c90";//hardik05 "f4fb86085f26a9ce03740f043d2cc51a2c380304";
+    String token = "f4fb86085f26a9ce03740f043d2cc51a2c380304";//hardik10 "4170cea0d1c7f54ba505cc34b8aec02e24536c90";//hardik05 "f4fb86085f26a9ce03740f043d2cc51a2c380304";
     return token;
-}
+  }
 
 }
 
