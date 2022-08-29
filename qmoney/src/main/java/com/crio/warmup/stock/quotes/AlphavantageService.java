@@ -44,6 +44,7 @@ public class AlphavantageService implements StockQuotesService {
       throws JsonProcessingException {
         String url = buildUri(symbol);
         String alphavantageDailyResponseData = restTemplate.getForObject(url,String.class);
+        System.out.println(alphavantageDailyResponseData);
         AlphavantageDailyResponse alphavantageDailyResponse = getObjectMapper().readValue(alphavantageDailyResponseData, AlphavantageDailyResponse.class);      
         Map<LocalDate, AlphavantageCandle> candlesMap = alphavantageDailyResponse.getCandles();
         List<Candle> candlesList = new ArrayList<>();

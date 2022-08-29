@@ -119,11 +119,17 @@ public static LocalDate getLastWorkingDate (LocalDate date){
             .map(trade -> {
               List<Candle> candlesList = new ArrayList<>();
               try {
-                candlesList = stockQuotesService.getStockQuote(trade.getSymbol(), trade.getPurchaseDate(), endDate)
-                .stream()
+                if(stockQuotesService != null){
+                  candlesList = stockQuotesService.getStockQuote(trade.getSymbol(), trade.getPurchaseDate(), endDate);
+                }
+                else {
+                  candlesList = getStockQuote(trade.getSymbol(), trade.getPurchaseDate(), endDate);
+                }
+                candlesList.stream()
                 .filter(candle -> candle.getDate().equals(trade.getPurchaseDate()) || candle.getDate()  .equals(getLastWorkingDate(endDate)))
                 .collect(Collectors.toList());
-              } catch (JsonProcessingException e) {
+              }
+              catch (JsonProcessingException e) {
                 e.printStackTrace();
               }
                 return mainCalculation(endDate, trade, getOpeningPriceOnStartDate(candlesList),getClosingPriceOnEndDate(candlesList)); //(candlesList.size()<2)?0.0:getClosingPriceOnEndDate(candlesList)
