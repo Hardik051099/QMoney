@@ -69,7 +69,10 @@ public class AlphavantageService implements StockQuotesService {
             }
           });    
         }catch (NullPointerException e){
-          throw new StockQuoteServiceException("API limit reached",e);
+          throw new StockQuoteServiceException("{\"Information\": \"The **demo** API key is for demo purposes only. "
+          + "Please claim your free API key at (https://www.alphavantage.co/support/#api-key) to "
+          + "explore our full API offerings. It takes fewer than 20 seconds, and we are committed to "
+          + "making it free forever.\"}",e);
         }
    
      return candlesList.stream()
