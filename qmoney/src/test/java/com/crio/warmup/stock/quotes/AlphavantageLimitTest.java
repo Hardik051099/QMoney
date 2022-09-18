@@ -1,15 +1,11 @@
 
 package com.crio.warmup.stock.quotes;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-
-import com.crio.warmup.stock.exception.StockQuoteServiceException;
 import java.time.LocalDate;
+import com.crio.warmup.stock.exception.StockQuoteServiceException;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;

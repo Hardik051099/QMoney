@@ -1,9 +1,17 @@
 
 package com.crio.warmup.stock.portfolio;
 
-import static java.time.temporal.ChronoUnit.DAYS;
-import static java.time.temporal.ChronoUnit.SECONDS;
-
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 import com.crio.warmup.stock.dto.AnnualizedReturn;
 import com.crio.warmup.stock.dto.Candle;
 import com.crio.warmup.stock.dto.PortfolioTrade;
@@ -11,27 +19,6 @@ import com.crio.warmup.stock.dto.TiingoCandle;
 import com.crio.warmup.stock.exception.StockQuoteServiceException;
 import com.crio.warmup.stock.quotes.StockQuotesService;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
-import com.crio.warmup.stock.dto.AnnualizedReturn;
-import com.crio.warmup.stock.dto.Candle;
-import com.crio.warmup.stock.dto.PortfolioTrade;
-import com.crio.warmup.stock.dto.TiingoCandle;
-import com.crio.warmup.stock.quotes.StockQuotesService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 import org.springframework.web.client.RestTemplate;
 
 public class PortfolioManagerImpl implements PortfolioManager {
@@ -108,7 +95,6 @@ PortfolioTrade trade, Double buyPrice, Double sellPrice) {
   double years = purchaseDate.until(endDate, ChronoUnit.DAYS)/365.24;
   double totalReturns = (sellPrice - buyPrice) / buyPrice;
   double annualizedReturns = Math.pow((1+totalReturns), (1/years)) - 1; 
-
 return new AnnualizedReturn(trade.getSymbol(), annualizedReturns, totalReturns);
 }
 
@@ -154,6 +140,55 @@ public static LocalDate getLastWorkingDate (LocalDate date){
             })
             .sorted(getComparator())
             .collect(Collectors.toList());
+  }
+  @Override
+  public List<AnnualizedReturn> calculateAnnualizedReturnParallel(
+      List<PortfolioTrade> portfolioTrades, LocalDate endDate, int numThreads)
+      throws InterruptedException, StockQuoteServiceException {
+
+      ExecutorService executorService = Executors.newFixedThreadPool(numThreads); 
+      List<AnnualizedReturn> annualizedReturns= new ArrayList<>();
+
+      List<Future<AnnualizedReturn>> responses =  portfolioTrades.stream().map(trade -> executorService.submit(()->{
+        List<Candle> candlesList = new ArrayList<>();
+              try {
+                if(stockQuotesService != null){
+                  candlesList = stockQuotesService.getStockQuote(trade.getSymbol(), trade.getPurchaseDate(), endDate);
+                }
+                else {
+                  candlesList = getStockQuote(trade.getSymbol(), trade.getPurchaseDate(), endDate);
+                }
+                candlesList.stream()
+                .filter(candle -> candle.getDate().equals(trade.getPurchaseDate()) || candle.getDate()  .equals(getLastWorkingDate(endDate)))
+                .collect(Collectors.toList());
+              }
+              catch (JsonProcessingException | StockQuoteServiceException e) {
+                e.printStackTrace();
+              }
+                return mainCalculation(endDate, trade, getOpeningPriceOnStartDate(candlesList),getClosingPriceOnEndDate(candlesList));
+      }))
+      .collect(Collectors.toList());
+
+      
+
+      try{
+        annualizedReturns = responses.stream().map(response -> {
+          AnnualizedReturn annualizedReturn = null;
+          try {
+           annualizedReturn = response.get();
+          } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+          }
+          return annualizedReturn;
+        })
+        .sorted(getComparator())
+        .collect(Collectors.toList());
+      }
+      catch (NullPointerException e){
+        throw new StockQuoteServiceException("message");
+      }
+      return annualizedReturns;
+      
   }
 
 }
