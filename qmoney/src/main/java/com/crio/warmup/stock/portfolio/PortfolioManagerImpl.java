@@ -133,7 +133,7 @@ public static LocalDate getLastWorkingDate (LocalDate date){
   public List<AnnualizedReturn> calculateAnnualizedReturn(List<PortfolioTrade> portfolioTrades,
       LocalDate endDate) {
 
-        return portfolioTrades.stream()
+ return portfolioTrades.stream()
             .map(trade -> {
               List<Candle> candlesList = new ArrayList<>();
               try {
